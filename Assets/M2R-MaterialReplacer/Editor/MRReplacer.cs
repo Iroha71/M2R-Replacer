@@ -33,6 +33,7 @@ public class MRReplacer : EditorWindow
         foreach (Material vrmMaterial in vrmMaterials) {
             float renderMode = vrmMaterial.GetFloat("_BlendMode");
             float cullMode = vrmMaterial.GetFloat("_CullMode");
+            int renderQueue = vrmMaterial.renderQueue;
             vrmMaterial.shader = Shader.Find(REALTOON_SHADER_PATH_URP);
             if (renderMode == M_CUTOUT) {
                 vrmMaterial.SetFloat("_TRANSMODE", 1f);
@@ -46,6 +47,7 @@ public class MRReplacer : EditorWindow
             vrmMaterial.SetColor("_OutlineColor", outlineColor);
             vrmMaterial.SetFloat("_Culling", cullMode);
             Undo.RecordObject(vrmMaterial, "Change material");
+            vrmMaterial.renderQueue = renderQueue;
         }
     }
 
