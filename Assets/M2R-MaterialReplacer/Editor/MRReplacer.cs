@@ -16,7 +16,6 @@ public class MRReplacer : EditorWindow
     }
 
     private void OnGUI() {
-        EditorGUI.BeginChangeCheck();
         vrmMaterialFolder = (DefaultAsset)EditorGUILayout.ObjectField("VRM Material Folder", vrmMaterialFolder, typeof(DefaultAsset), false);
         
         outlineColor = EditorGUILayout.ColorField("Outline Color", outlineColor);
@@ -35,18 +34,18 @@ public class MRReplacer : EditorWindow
             float renderMode = vrmMaterial.GetFloat("_BlendMode");
             float cullMode = vrmMaterial.GetFloat("_CullMode");
             vrmMaterial.shader = Shader.Find(REALTOON_SHADER_PATH_URP);
-            switch (renderMode) {
-                case M_CUTOUT:
-                    vrmMaterial.SetFloat("_TRANSMODE", 1f);
-                    vrmMaterial.SetFloat("_N_F_CO", 1f);
-                    vrmMaterial.SetFloat("_Cutout", 0.5f);
-                    break;
-                case M_TRANSPARENT:
-                    vrmMaterial.SetFloat("_TRANSMODE", 1f);
-                    break;
+            if (renderMode == M_CUTOUT) {
+                vrmMaterial.SetFloat("_TRANSMODE", 1f);
+                vrmMaterial.SetFloat("_N_F_CO", 1f);
+                vrmMaterial.SetFloat("_Cutout", 0.5f);
+            } else if (renderMode == M_TRANSPARENT) {
+                vrmMaterial.SetFloat("_TRANSMODE", 1f);
+                vrmMaterial.SetInt("_BleModSour", 5);
+                vrmMaterial.SetInt("_BleModDest", 10);
             }
             vrmMaterial.SetColor("_OutlineColor", outlineColor);
             vrmMaterial.SetFloat("_Culling", cullMode);
+            Undo.RecordObject(vrmMaterial, "Change material");
         }
     }
 
